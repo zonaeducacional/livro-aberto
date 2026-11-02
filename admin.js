@@ -52,11 +52,10 @@
             <h4>Acesso do Escritor</h4>
             <p class="auth-desc">Digite sua senha ou PIN de autor para gerenciar o livro.</p>
             <div class="input-group">
-              <input type="password" id="admin-pin-input" placeholder="Digite seu PIN (padrão: 1234)" autofocus />
+              <input type="password" id="admin-pin-input" placeholder="Digite seu PIN de acesso" autofocus />
               <button id="admin-login-submit" class="btn-primary">Entrar</button>
             </div>
             <p id="auth-error-msg" class="auth-error hidden">PIN incorreto. Tente novamente.</p>
-            <p class="auth-hint">Dica: O PIN padrão inicial de fábrica é <code>1234</code>.</p>
           </div>
         </div>
 
