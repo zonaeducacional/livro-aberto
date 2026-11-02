@@ -4,6 +4,8 @@ Uma plataforma literária e pedagógica interativa baseada em **folheamento 3D r
 
 Permite que o autor redija, edite, organize e publique crônicas, reflexões filosóficas, memórias e ensaios pedagógicos quando quiser, com auto-paginação dinâmica, sumário clicável em tempo real e persistência local no navegador.
 
+🌐 **Acesse online no GitHub Pages**: [https://zonaeducacional.github.io/livro-aberto/](https://zonaeducacional.github.io/livro-aberto/)
+
 ---
 
 ## 🚀 Funcionalidades Principais
