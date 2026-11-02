@@ -1,0 +1,1343 @@
+/* ==========================================================================
+   LIVRO ABERTO — DESIGN EDITORIAL & PAINEL DO AUTOR (UI PRO MAX)
+   ========================================================================== */
+
+/* 1. RESET & FUNDAMENTOS */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-stage: #161513;
+  --bg-gradient: radial-gradient(circle at 50% 35%, #2a2622 0%, #151412 85%);
+  --paper-bg: #fcfbf7;
+  --paper-shadow: rgba(0, 0, 0, 0.45);
+  --paper-spine-shadow: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 12%, rgba(0,0,0,0) 100%);
+  --paper-spine-shadow-right: linear-gradient(to left, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 12%, rgba(0,0,0,0) 100%);
+  --text-primary: #23201d;
+  --text-muted: #6b645b;
+  --gold-accent: #c59b27;
+  --gold-glow: rgba(197, 155, 39, 0.25);
+  
+  /* Fontes */
+  --font-editorial: 'Cormorant Garamond', Garamond, Georgia, serif;
+  --font-display: 'Cinzel', serif;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Dimensões do Livro */
+  --book-width: 860px;
+  --book-height: 560px;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: var(--bg-stage);
+  background: var(--bg-gradient);
+  font-family: var(--font-editorial);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2. BARRA DE FERRAMENTAS DO LEITOR (HUD) */
+.reader-hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(18, 17, 15, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hud-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.book-emblem {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.book-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #f5f2ea;
+}
+
+.hud-author {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: #a8a095;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e6e0d5;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.hud-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.hud-btn:active {
+  transform: translateY(0);
+}
+
+.btn-toc {
+  background: rgba(197, 155, 39, 0.15);
+  border-color: rgba(197, 155, 39, 0.35);
+  color: #ecd285;
+}
+
+.btn-toc:hover {
+  background: rgba(197, 155, 39, 0.28);
+  border-color: rgba(197, 155, 39, 0.6);
+  color: #fff;
+}
+
+.page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d1c8bb;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.indicator-divider {
+  color: #70685e;
+}
+
+.hud-right {
+  display: flex;
+  align-items: center;
+}
+
+.reading-hint {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: #8c8275;
+}
+
+/* 3. PALCO E ESTRUTURA DO LIVRO */
+.book-stage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
+}
+
+.book-environment {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-wrapper {
+  position: relative;
+  width: var(--book-width);
+  height: var(--book-height);
+  user-select: none;
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.65));
+}
+
+.pages-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.pages {
+  width: 100%;
+  height: 100%;
+}
+
+/* 4. DESIGN DAS PÁGINAS FÍSICAS */
+.page {
+  background-color: var(--paper-bg);
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, rgba(246,242,233,0.85) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.008) 2px, rgba(0,0,0,0.008) 4px);
+  color: var(--text-primary);
+  width: calc(var(--book-width) / 2);
+  height: var(--book-height);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.page-left {
+  box-shadow: inset -12px 0 16px -8px rgba(0, 0, 0, 0.12);
+}
+
+.page-left::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  background: var(--paper-spine-shadow-right);
+  pointer-events: none;
+}
+
+.page-right {
+  box-shadow: inset 12px 0 16px -8px rgba(0, 0, 0, 0.12);
+}
+
+.page-right::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 30px;
+  background: var(--paper-spine-shadow);
+  pointer-events: none;
+}
+
+.page-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 40px 42px 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.page-header-subtle {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.page-footer {
+  text-align: center;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.page-number {
+  font-family: var(--font-editorial);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 5. TIPOGRAFIA DO TEXTO EDITORIAL */
+.reading-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chapter-start-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.chapter-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 2.5px;
+  color: var(--gold-accent);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.chapter-main-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #1a1714;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.chapter-subtitle {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.chapter-date {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  color: #9c9489;
+  letter-spacing: 0.5px;
+}
+
+.chapter-divider {
+  width: 50px;
+  height: 2px;
+  background: var(--gold-accent);
+  margin: 10px auto 0;
+}
+
+.prose-content {
+  font-size: 1.05rem;
+  line-height: 1.62;
+  text-align: justify;
+  hyphens: auto;
+  color: #2b2723;
+}
+
+.prose-content p {
+  margin-bottom: 14px;
+  text-indent: 1.8em;
+}
+
+.prose-content p:first-of-type {
+  text-indent: 0;
+}
+
+/* Capitular (Drop Cap) */
+.with-dropcap::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  line-height: 0.8;
+  padding-top: 4px;
+  padding-right: 8px;
+  padding-bottom: 2px;
+  color: var(--gold-accent);
+  font-weight: 700;
+}
+
+/* 6. CAPA DURA & CONTRACAPA */
+.hard-cover {
+  background: linear-gradient(135deg, #1c1815 0%, #2a241f 50%, #151210 100%) !important;
+  color: #f7f3e8 !important;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8) !important;
+}
+
+.cover-inner {
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(197, 155, 39, 0.4);
+  margin: auto;
+  padding: 35px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, rgba(197, 155, 39, 0.08) 0%, transparent 80%);
+}
+
+.cover-ornament {
+  color: var(--gold-accent);
+  font-size: 0.85rem;
+  letter-spacing: 6px;
+  opacity: 0.85;
+}
+
+.cover-badge {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: var(--gold-accent);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid rgba(197, 155, 39, 0.3);
+  border-radius: 4px;
+}
+
+.cover-title {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fcf9f0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  line-height: 1.15;
+}
+
+.cover-divider {
+  width: 70px;
+  height: 2px;
+  background: var(--gold-accent);
+  margin: 14px auto;
+}
+
+.cover-subtitle {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #ded7c8;
+}
+
+.cover-center-art {
+  margin: 15px 0;
+}
+
+.cover-emboss-circle {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 2px solid rgba(197, 155, 39, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 0 15px rgba(197, 155, 39, 0.2);
+}
+
+.cover-icon {
+  font-size: 40px;
+}
+
+.cover-author {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: #fcf9f0;
+  font-weight: 700;
+}
+
+.cover-year {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: #a39b8c;
+  margin-top: 4px;
+}
+
+/* CONTRACAPA */
+.back-inner {
+  justify-content: center;
+}
+
+.back-cover-body {
+  padding: 30px 15px;
+}
+
+.quote-colophon {
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: #e8e2d5;
+}
+
+.colophon-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--gold-accent);
+  margin: 25px auto;
+}
+
+.colophon-meta .brand {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  color: var(--gold-accent);
+}
+
+.colophon-meta .author-sign {
+  font-size: 1.05rem;
+  color: #fcf9f0;
+  margin-top: 5px;
+}
+
+.colophon-meta .sub {
+  font-size: 0.8rem;
+  color: #9e9587;
+  margin-top: 2px;
+}
+
+/* 7. FOLHA DE ROSTO & DEDICATÓRIA */
+.dedication-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 15px 0;
+}
+
+.dedication-frame {
+  text-align: center;
+  padding: 15px 10px;
+}
+
+.quote-mark {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--gold-accent);
+  display: block;
+  margin-bottom: -10px;
+}
+
+.dedication-text {
+  font-size: 1.18rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: #3b3530;
+}
+
+.dedication-signature {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: #595047;
+  margin-top: 14px;
+}
+
+.imprint-box {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 14px 18px;
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #615a51;
+  border-left: 2px solid var(--gold-accent);
+}
+
+.imprint-note {
+  font-style: italic;
+  margin-top: 4px;
+  color: #8c8275;
+}
+
+/* 8. SUMÁRIO / ÍNDICE CLICÁVEL */
+.toc-body {
+  flex: 1;
+  padding: 10px 0;
+}
+
+.toc-heading {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1c1815;
+}
+
+.toc-divider {
+  width: 40px;
+  height: 2px;
+  background: var(--gold-accent);
+  margin: 10px auto 20px;
+}
+
+.toc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.toc-item:hover {
+  background: rgba(197, 155, 39, 0.12);
+  transform: translateX(3px);
+}
+
+.toc-item:hover .toc-title {
+  color: #b58917;
+  font-weight: 600;
+}
+
+.toc-item-left {
+  display: flex;
+  gap: 8px;
+}
+
+.toc-num {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--gold-accent);
+}
+
+.toc-title {
+  font-size: 1.05rem;
+  color: #23201d;
+  transition: color 0.2s;
+}
+
+.toc-dots {
+  flex: 1;
+  border-bottom: 1px dotted #beb5a5;
+  margin: 0 8px;
+}
+
+.toc-page {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #6e6559;
+}
+
+/* PÁGINA DE NOTAS DO LEITOR */
+.notes-lines {
+  flex: 1;
+  padding: 15px 0;
+}
+
+.notes-hint {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #8c8275;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.notes-lines .line {
+  border-bottom: 1px solid #dfd8cb;
+  height: 32px;
+}
+
+/* ==========================================================================
+   9. PAINEL ADMINISTRATIVO DO AUTOR (DARK GLASSMORPHISM)
+   ========================================================================== */
+
+/* Botão Flutuante Discreto */
+.admin-trigger-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(22, 20, 18, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 155, 39, 0.4);
+  color: #f5f2ea;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px var(--gold-glow);
+  z-index: 99;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-trigger-btn:hover {
+  background: rgba(35, 31, 27, 0.95);
+  border-color: var(--gold-accent);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 18px var(--gold-glow);
+}
+
+.admin-btn-icon {
+  font-size: 16px;
+}
+
+/* Modal Overlay & Drawer */
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 9, 8, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.25s ease;
+}
+
+.admin-modal-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.admin-modal-panel {
+  background: #191714;
+  background: linear-gradient(145deg, rgba(32, 29, 25, 0.96) 0%, rgba(20, 18, 16, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(197, 155, 39, 0.1);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.admin-panel-header {
+  padding: 18px 24px;
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 26px;
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f7f3ea;
+  letter-spacing: 0.5px;
+}
+
+.panel-subtitle {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: #9e9587;
+}
+
+.admin-close-btn {
+  background: transparent;
+  border: none;
+  color: #a8a095;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.admin-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Telas / Views */
+.admin-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-view.hidden {
+  display: none;
+}
+
+/* Auth Card */
+.auth-card {
+  padding: 50px 30px;
+  max-width: 420px;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-icon-wrap {
+  font-size: 44px;
+  margin-bottom: 4px;
+}
+
+.auth-card h4 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: #f5f2ea;
+}
+
+.auth-desc {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: #9e9587;
+}
+
+.auth-card .input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.auth-error {
+  color: #f87171;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+}
+
+.auth-error.hidden {
+  display: none;
+}
+
+.auth-hint {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: #787167;
+}
+
+.auth-hint code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--gold-accent);
+}
+
+/* Abas de Navegação Admin */
+.admin-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 16px 0;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #9e9587;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: #f5f2ea;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tab-btn.active {
+  color: var(--gold-accent);
+  border-bottom-color: var(--gold-accent);
+  background: rgba(197, 155, 39, 0.06);
+}
+
+.tab-content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.tab-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tab-pane.hidden {
+  display: none;
+}
+
+/* Barra de Ações & Tabela de Capítulos */
+.pane-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.pane-search-wrap input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f5f2ea;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  width: 220px;
+}
+
+.chapters-table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.chapters-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.chapters-table th {
+  background: rgba(255, 255, 255, 0.03);
+  color: #8c8275;
+  padding: 12px 14px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chapters-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #dfd7cc;
+}
+
+.chapters-table tr:hover td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.order-badge {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: #f5f2ea;
+}
+
+.chap-title-line {
+  font-weight: 600;
+  color: #f5f2ea;
+}
+
+.chap-subtitle-line {
+  font-size: 0.75rem;
+  color: #8f8576;
+  margin-top: 2px;
+}
+
+.status-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.status-published {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-draft {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.col-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.btn-action {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f5f2ea;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-action:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.empty-table-row {
+  text-align: center;
+  padding: 30px !important;
+  color: #8c8275;
+  font-style: italic;
+}
+
+/* Formulário do Editor de Texto */
+.editor-form, .settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #d1c8bb;
+}
+
+.editor-label-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.word-counter {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: #8c8275;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f5f2ea;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea {
+  font-family: var(--font-editorial);
+  font-size: 1.12rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold-accent);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.editor-tips {
+  font-family: var(--font-ui);
+  color: #8a8275;
+}
+
+/* Switch Toggle */
+.checkbox-group {
+  justify-content: center;
+}
+
+.switch-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: #ded7cc;
+}
+
+.switch-label input {
+  display: none;
+}
+
+.switch-slider {
+  width: 40px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  position: relative;
+  transition: 0.2s;
+}
+
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.switch-label input:checked + .switch-slider {
+  background: #22c55e;
+}
+
+.switch-label input:checked + .switch-slider::before {
+  transform: translateX(18px);
+}
+
+/* Botões do Painel */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  background: var(--gold-accent);
+  color: #12100d;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: #deb235;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--gold-glow);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e6e0d5;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #c59b27 0%, #9e7b1c 100%);
+  color: #fff;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-accent:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Aba Backup */
+.backup-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.backup-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.backup-card .b-icon {
+  font-size: 32px;
+}
+
+.backup-card h4 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: #f5f2ea;
+}
+
+.backup-card p {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: #9e9587;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.sovereignty-badge {
+  background: rgba(197, 155, 39, 0.1);
+  border: 1px solid rgba(197, 155, 39, 0.25);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: #d1b975;
+  display: flex;
+  align-items: center;
+}
+
+/* 10. TOAST NOTIFICATIONS */
+.admin-toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.admin-toast {
+  background: #1f1c19;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f7f3ea;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
+}
+
+.admin-toast.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.toast-success {
+  border-left: 3px solid #22c55e;
+}
+
+.toast-warning {
+  border-left: 3px solid #eab308;
+}
+
+.toast-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 11. RESPONSIVIDADE */
+@media (max-width: 900px) {
+  :root {
+    --book-width: 95vw;
+    --book-height: 60vh;
+  }
+  .reader-hud {
+    padding: 0 12px;
+  }
+  .hud-right {
+    display: none;
+  }
+  .form-row.two-cols {
+    grid-template-columns: 1fr;
+  }
+  .backup-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Livro Aberto — Sérgio</title>
+  
+  <!-- Fontes Editoriais Clássicas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- BARRA DE FERRAMENTAS DO LEITOR (HUD SUPERIOR) -->
+  <header class="reader-hud">
+    <div class="hud-left">
+      <div class="book-emblem">📖</div>
+      <div class="book-titles">
+        <h1 id="hud-book-title" class="hud-title">Livro Aberto</h1>
+        <span id="hud-book-author" class="hud-author">por Sérgio</span>
+      </div>
+    </div>
+
+    <!-- CONTROLES CENTRAIS DE NAVEGAÇÃO -->
+    <div class="hud-controls">
+      <button id="btn-first-page" class="hud-btn" title="Ir para a Capa (Início)">⏮</button>
+      <button id="btn-prev-page" class="hud-btn" title="Página Anterior (Seta Esquerda)">‹ Anterior</button>
+      
+      <div class="page-indicator">
+        <span id="current-page-num">1</span>
+        <span class="indicator-divider">/</span>
+        <span id="total-pages-num">--</span>
+      </div>
+
+      <button id="btn-next-page" class="hud-btn" title="Próxima Página (Seta Direita)">Próxima ›</button>
+      <button id="btn-last-page" class="hud-btn" title="Ir para o Fim">⏭</button>
+      <button id="btn-toc-jump" class="hud-btn btn-toc" title="Sumário da Obra">📑 Sumário</button>
+    </div>
+
+    <div class="hud-right">
+      <span class="reading-hint">Dica: Use as setas ← → para folhear</span>
+    </div>
+  </header>
+
+  <!-- PALCO PRINCIPAL DO LIVRO -->
+  <main class="book-stage">
+    <div class="book-environment">
+      <div class="book-shadow"></div>
+      <div class="book-wrapper">
+        <div class="pages-container">
+          <!-- As páginas serão geradas dinamicamente pelo motor pagination.js -->
+          <div class="pages" id="flipbook-pages">
+            <!-- Dynamic pages injected here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SCRIPTS DO ECOSSISTEMA SOBERANO -->
+  <!-- 1. jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- 2. Módulo de Dados e Persistência Soberana -->
+  <script src="./data-store.js"></script>
+  <!-- 3. Motor de Auto-Paginação Dinâmica -->
+  <script src="./pagination.js"></script>
+  <!-- 4. Painel Administrativo do Autor & Editor -->
+  <script src="./admin.js"></script>
+  <!-- 5. Biblioteca Turn.js e Orquestrador Principal -->
+  <script src="./script.js"></script>
+
+</body>
+</html>
